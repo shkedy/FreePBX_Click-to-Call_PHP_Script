@@ -6,6 +6,8 @@
 $strHost = "127.0.0.1";
 $strUser = "admin";             #specify the asterisk manager username you want to login with
 $strSecret = "MYSECRETPASS";    #specify the password for the above user, can be fetched from /etc/asterisk/manager.conf
+$strPort = "5038";              #specifiy the port - default for asterisk is 5038
+$strProtocol ="PJSIP";		#SIP of PJSIP
 
 # Config
 $strCallerId = "CTR Plugin (%s)"; #specify caller id with number to be called in %s placeholder
@@ -56,7 +58,7 @@ if($result['Success'] === true)
         if (!$oSocket)
         {
                 $result['Success'] = false;
-                $result['Description'] = sprintf("Error while creating socket to [%s]:%s, %s (%s)", $strHost, $intPort, $errstr, $errno);
+                $result['Description'] = sprintf("Error while creating socket to [%s]:%s, %s (%s)", $strHost, $strPort, $errstr, $errno);
         }
 
         # Authenticate
@@ -97,7 +99,7 @@ if($result['Success'] === true)
         {
                 // Prepare originate request
                 $originateRequest = "Action: Originate\r\n";
-                $originateRequest .= "Channel: SIP/$strExten\r\n";
+                $originateRequest .= "Channel: $strProtocol/$strExten\r\n";
                 $originateRequest .= "WaitTime: $strWaitTime\r\n";
                 $originateRequest .= "CallerId: $strCallerId\r\n";
                 $originateRequest .= "Exten: $strNumber\r\n";
