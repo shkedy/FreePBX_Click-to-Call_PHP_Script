@@ -8,6 +8,8 @@ $strUser = "admin";             #specify the asterisk manager username you want 
 $strSecret = "MYSECRETPASS";    #specify the password for the above user, can be fetched from /etc/asterisk/manager.conf
 $strPort = "5038";              #specifiy the port - default for asterisk is 5038
 $strProtocol ="PJSIP";		#SIP of PJSIP
+$boolRestrictIP = true;         #True/False to restrict to specific IP addresses
+$strAllowedIps = "XXX.XXX.XXX.XXX"; #IP addresses that will be allowed in case case it's IP restricted
 
 # Config
 $strCallerId = "CTR Plugin (%s)"; #specify caller id with number to be called in %s placeholder
@@ -38,6 +40,14 @@ if(!preg_match('/^[0-9]+$/i', $strExten))
         $result['ValidInput'] = false;
         $result['Success'] = false;
         $result['Description'] = sprintf("Error, extension to call from must be provided and may only contain numeric characters, extension provided was: %s", $strExten);
+}
+
+
+# Exit if IP is restricted and IP not allowed
+if ( $boolRestrictIP && strpos( $strAllowedIps ,$_SERVER["REMOTE_ADDR"])===false){
+	$result['Success'] = false;
+    $result['Description'] = sprintf("Error, %s is not welcome here",$_SERVER["REMOTE_ADDR"]);
+	
 }
 
 
